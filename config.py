@@ -1,10 +1,17 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 import os
 from pydantic_ai.models.openai import OpenAIModel
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+# Groq uses OpenAI-compatible API
+# pydantic-ai reads these from env vars
+os.environ["OPENAI_API_KEY"] = os.getenv("GROQ_API_KEY", "")
+os.environ["OPENAI_BASE_URL"] = "https://api.groq.com/openai/v1"
+
+if not os.environ["OPENAI_API_KEY"]:
+    raise RuntimeError("GROQ_API_KEY is not set")
 
 model = OpenAIModel(
-    model_name="llama3-70b-8192",
-    api_key=GROQ_API_KEY,
-    base_url="https://api.groq.com/openai/v1",
+    model_name="llama3-70b-8192"
 )
